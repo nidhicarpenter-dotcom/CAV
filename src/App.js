@@ -1,107 +1,105 @@
-import React,{useState} from 'react';
-import './App.css';
+import React, { Component } from 'react';
 
-
-function App()
+class App extends Component 
 {
 
-	const [inputList, setInputList]=useState([
-		{firstName:""}
-		
-	]);
+	constructor(props){
+	super(props);
 
-	
-
-	const handleChange =(e,index) =>
+	this.state = 
 	{
-	   const {name,value} =e.target;
+	username : '',
+	validationMessage:'',
+	names:[]
+    }
 
-        if(value.substring(3,0) !== "CAV"){
-			
-        console.log('this is the error here');
-		}
-
-		if(value.length !== 10 ){
-        console.log('the char length should not be less than or greater than 10');
-	}
-	  
-	  const list=[...inputList];
-	  list[index][name]=value;
-	  setInputList(list);
-	}
-
-	const handleAddInput=()=>{
-		
-		const list=[...inputList];
-
-		list.push({firstName:""});
-		setInputList(list);
-		
-	}
-	
-
-	const handleDeleteInput=(index)=>{
-		const list=[...inputList];
-		list.splice(index,1);
-		setInputList(list);
-	}
-	
-	
-	
-	return(
-	   
-       <div className="App">
-		   {inputList.map((item,i)=>{
-			return  (
-			   <div key={i} className="box">
-				<label>CAV Number </label>
-				<input 
-					type="text" 
-					name="firstName" 
-					placeholder="CAV Number" 
-					className="mr10" 
-					value={item.firstName}
-					onChange={e=>handleChange(e,i)}>
-                </input>
-				
-
-				{inputList.length-1===i &&
-				<button
-					 type="button" 
-					 value="Add" 
-					 className="mr9"
-					 onClick={handleAddInput}>
-                Add</button>}
-		   </div>
-		  
-		   
-		 
-			)
-		   })}
-		    
-			
-             <label><h1>Saved CAV Number : </h1></label>
-		   
-			   <table className="fixed_header">
-				{inputList.map((item, i) => (
-					<tr key={i}>
-						<td className="cavhead">{item.firstName}</td>
-						<td className="cavhead">
-							{inputList.length !==1  &&
-							<button
-								type="button" 
-								value="Remove" 
-								className="mr10"
-								onClick={()=>handleDeleteInput(i)}>
-							Remove</button>}
-						</td>
-				    </tr>
-				))}
-				</table>
-			
-		</div>
-	   
-	)
+	this.updateInput = this.updateInput.bind(this);
+	this.handleSubmit = this.handleSubmit.bind(this);
 }
 
+
+	updateInput(event)
+	{
+	this.setState({username : event.target.value})
+	}
+
+	handleDeleteInput(arrayValue)
+	{
+
+
+	
+	if (arrayValue > -1) {
+		this.state.names.splice(arrayValue, 1);
+
+		var getList = this.state.names;
+		this.setState({ names: getList })
+
+	}
+	
+
+	//return true;
+	}
+
+
+	handleSubmit()
+	{
+
+	
+	
+	if(this.state.username.trim().length !== 10){
+
+	this.setState({validationMessage : "length should be equal to 10"})
+	
+	}
+	else if(this.state.username.trim().substring(3,0) !== 'CAV'){
+
+	
+	this.setState({validationMessage : "First 3 code should be CAV"})
+	
+
+	}else{
+
+	
+	this.setState({validationMessage : ""})
+
+	
+	this.setState({ names: [...this.state.names, this.state.username] })
+
+	
+
+	}
+
+	
+	}
+
+
+
+	render(){
+	return (
+		<center>
+		<div>
+		<input type="text" onChange={this.updateInput}></input>
+		<input type="submit" value="Add" onClick={this.handleSubmit} ></input>
+	<p style = {{color: "red"}} id = "error">{this.state.validationMessage}</p>
+		</div>
+		<br/><br/><br/>
+
+		<label><h1>Saved CAV Number : </h1></label>
+
+		
+
+		<table className="fixed_header" border = "1" cellSpacing = "0" cellPadding = "0"> 
+		
+				{this.state.names.map((item,index) => {
+				return <tr><td>{item}</td> <td><input type="button" value="Remove" className="mr10" onClick={()=>this.handleDeleteInput(index)}></input></td></tr>;
+				})}
+
+		
+		</table>
+
+
+		</center>
+	);
+	}
+	} 
 export default App;
